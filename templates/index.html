@@ -105,12 +105,12 @@
             const formData = new FormData();
             const fileInput = document.getElementById('file');
             formData.append('file', fileInput.files[0]);
-
+    
             const loadingElement = document.getElementById('loading');
             const resultElement = document.getElementById('result');
             resultElement.innerHTML = '';
             loadingElement.style.display = 'block';
-
+    
             fetch('/', {
                 method: 'POST',
                 body: formData
@@ -131,6 +131,10 @@
                     resultElement.innerHTML = `
                         <img src="${imageUrl}" class="uploaded-image" alt="Uploaded Image">
                         ${predictions}
+                        <div class="gpt-response">
+                            <h3>GPT Response:</h3>
+                            <p>${data.gpt_response}</p>
+                        </div>
                     `;
                 }
             })
@@ -140,5 +144,6 @@
             });
         });
     </script>
+    
 </body>
 </html>

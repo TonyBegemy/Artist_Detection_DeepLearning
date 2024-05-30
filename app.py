@@ -135,7 +135,7 @@ def index():
             print(gpt_response)
             print("---------------------\n\n\n")
 
-            return jsonify({"results": results, "image_path": f"uploads/{filename}"})
+            return jsonify({"results": results, "image_path": f"uploads/{filename}", "gpt_response": gpt_response})
         else:
             return jsonify({'error': 'File type not allowed'})
     return render_template('index.html')
