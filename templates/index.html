@@ -76,9 +76,9 @@
     </style>
 </head>
 <body>
-    <!-- <header>
-        <a href="/about">About</a>
-    </header> -->
+    <header>
+        <a href="{{ url_for('about') }}">About</a>
+    </header>
     <h1>Artist Prediction</h1>
     <form id="upload-form" enctype="multipart/form-data">
         <input type="file" name="file" id="file" accept="image/*" required>
