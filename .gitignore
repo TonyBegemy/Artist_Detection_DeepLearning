@@ -6,3 +6,5 @@
 /.ipynb_checkpoints
 model/Artist_Resnet_model.h5
 *.jpg
+*.jpeg
+*.png
