@@ -1,10 +1,12 @@
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, request, render_template, jsonify, send_from_directory
 import numpy as np
 import cv2
 import imageio
 import os
 import pickle
 from tensorflow.keras.preprocessing import image
+from tensorflow.keras.models import load_model
+
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
@@ -14,17 +16,35 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 MB limit
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}# dol ely hay3ado bs 
 
-# Load the trained model from the .pkl file
-with open('artist_prediction_model.pkl', 'rb') as file:
-    model = pickle.load(file)
+model = load_model('model/Artist_Resnet_model.h5')
+
 
 # Define the labels (artists) used in your model
 labels = [
-#    placeholders leh asamy el artists  # Add all the labels here
+    "Vincent_van_Gogh",
+    "Edgar_Degas",
+    "Pablo_Picasso",
+    "Pierre-Auguste_Renoir",
+    "Albrecht_Dürer",
+    "Paul_Gauguin",
+    "Francisco_Goya",
+    "Rembrandt",
+    "Alfred_Sisley",
+    "Titian",
+    "Marc_Chagall",
+    "Rene_Magritte",
+    "Amedeo_Modigliani",
+    "Paul_Klee",
+    "Henri_Matisse",
+    "Andy_Warhol",
+    "Mikhail_Vrubel",
+    "Sandro_Botticelli"
 ]
 
 
 train_input_shape = (224, 224, 3)#3lshan el model mayfar23sh 
+
+
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -46,21 +66,24 @@ def index():
             return jsonify({'error': 'No selected file'})
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            img_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            file.save(img_path)
-            img = imageio.imread(img_path)
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(file_path)
+            img = imageio.imread(file_path)
             preprocessed_img = preprocess_image(img)
             prediction = model.predict(preprocessed_img)
-            prediction_probability = np.amax(prediction)
-            prediction_idx = np.argmax(prediction)
-            result = {
-                "predicted_artist": labels[prediction_idx].replace('_', ' '),
-                "prediction_probability": prediction_probability * 100
-            }
-            return jsonify(result)
+            top_3_indices = np.argsort(prediction[0])[-3:][::-1]
+            results = [
+                {"artist": labels[idx].replace('_', ' '), "probability": prediction[0][idx] * 100}
+                for idx in top_3_indices
+            ]
+            return jsonify({"results": results, "image_path": f"uploads/{filename}"})
         else:
             return jsonify({'error': 'File type not allowed'})
     return render_template('index.html')
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 @app.route('/about')
 def about():

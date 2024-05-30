@@ -19,7 +19,7 @@
         }
         header {
             width: 100%;
-            text-align: left;
+            text-align: right;
             padding: 20px;
             box-sizing: border-box;
         }
@@ -64,6 +64,11 @@
             background: #00BFA5;
             transform: scale(1.05);
         }
+        #loading {
+            display: none;
+            margin-top: 20px;
+            color: #03DAC6;
+        }
         #result {
             margin-top: 20px;
             background: #1f1f1f;
@@ -73,17 +78,26 @@
             width: 300px;
             text-align: center;
         }
+        .prediction {
+            margin-bottom: 10px;
+        }
+        .uploaded-image {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
     <header>
-        <a href="{{ url_for('about') }}">About</a>
+        <a href="/about">About</a>
     </header>
     <h1>Artist Prediction</h1>
     <form id="upload-form" enctype="multipart/form-data">
         <input type="file" name="file" id="file" accept="image/*" required>
         <button type="submit">Predict Artist</button>
     </form>
+    <div id="loading">Loading...</div>
     <div id="result"></div>
     <script>
         document.getElementById('upload-form').addEventListener('submit', function(event) {
@@ -92,23 +106,36 @@
             const fileInput = document.getElementById('file');
             formData.append('file', fileInput.files[0]);
 
+            const loadingElement = document.getElementById('loading');
+            const resultElement = document.getElementById('result');
+            resultElement.innerHTML = '';
+            loadingElement.style.display = 'block';
+
             fetch('/', {
                 method: 'POST',
                 body: formData
             })
             .then(response => response.json())
             .then(data => {
-                const resultDiv = document.getElementById('result');
+                loadingElement.style.display = 'none';
                 if (data.error) {
-                    resultDiv.innerHTML = `<p style="color: #ff4c4c;">${data.error}</p>`;
+                    resultElement.innerHTML = `<p style="color: #ff4c4c;">${data.error}</p>`;
                 } else {
-                    resultDiv.innerHTML = `
-                        <h2>Predicted Artist: ${data.predicted_artist}</h2>
-                        <p>Prediction Probability: ${data.prediction_probability.toFixed(2)}%</p>
+                    const predictions = data.results.map(result => `
+                        <div class="prediction">
+                            <h2>${result.artist}</h2>
+                            <p>Probability: ${result.probability.toFixed(2)}%</p>
+                        </div>
+                    `).join('');
+                    const imageUrl = `/${data.image_path}`;
+                    resultElement.innerHTML = `
+                        <img src="${imageUrl}" class="uploaded-image" alt="Uploaded Image">
+                        ${predictions}
                     `;
                 }
             })
             .catch(error => {
+                loadingElement.style.display = 'none';
                 console.error('Error:', error);
             });
         });
