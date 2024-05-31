@@ -34,29 +34,30 @@ Description: This dataset is a collection of artist names with their respective 
 
 The images are preprocessed and augmented to improve the model's performance. This involves:
 
-<li> Rescaling the image pixel values. </li>
-<li> Applying random rotations, shifts, shears, and zooms.</li>
-<li> Horizontally flipping some images.</li>
-<li> Dividing the dataset into training and validation sets.</li>
+<li> Working with 18 Classes only (artists that have above than 150 paintings) </li>
+<li> Initializing class weights to each artist </li>
+<li> Rescaling the image pixel values to [0,1]</li>
+<li> Applying random rotations, shifts, shears, and zooms (Augmentation).</li>
+<li> Dividing the dataset into training and validation sets (80%, 20%).</li>
 
 <b> Model Architecture </b>
 We use the ResNet50 model pretrained on ImageNet as the base model. The following steps are taken:
 
-<li> Load the ResNet50 model without the top classification layer.</li>
-<li> Set all layers of ResNet50 to be trainable.</li>
-<li> Add new layers for our specific classification task:</li>
-<li> Flatten the output of ResNet50.</li>
-<li> Add a dense layer with ReLU activation and batch normalization.</li>
-<li> Add another dense layer with ReLU activation and batch normalization.</li>
-<li> Add the final output layer with a softmax activation function to predict probabilities for each artist class.</li>
+<li> Loaded the ResNet50 model without the top classification layer.</li>
+<li> Added new layers for our specific classification task:</li>
+<li> Flattened the output of ResNet50.</li>
+<li> Added a dense layer with 512 units, ReLU activation, dropout, and batch normalization.</li>
+<li> Added another dense layer with 32 units, ReLU activation, dropout, and batch normalization.</li>
+<li> Added the final output layer with a softmax activation function to predict probabilities for each artist class.</li>
 
 <b> Model Training </b>
 The model is trained using the augmented data, with the training process monitored through validation data. Key points include:
 
 <li> Using Adam optimizer with a specified learning rate.</li>
 <li> Compiling the model with categorical cross-entropy loss and accuracy as the metric.</li>
-<li> Training the model with the training data and validating with the validation data.</li>
-<li> Using callbacks to reduce the learning rate when a metric has stopped improving.</li>
+<li> Using callbacks EarlyStopping and ReduceLROnPlateau to reduce the learning rate when a metric (val_loss) has stopped improving.</li>
+<li> First Training Phase: Training the entire network for 20 epochs.</li>
+<li> Second Training Phase: Freeze the core ResNet layers and train only the first 50 layers for 50 epochs.</li>
 
 # Setup Instructions
 
@@ -66,14 +67,18 @@ cd <repository-directory>
 
 <li> Create and activate a virtual environment: </li>
 python -m venv venv
-source venv/bin/activate   # On Windows use `venv\Scripts\activate`
+# On Mac use: source venv/bin/activate   # On Windows use: venv\Scripts\activate
 
 <li> Install the required packages: </li>
 pip install -r requirements.txt
 
 # Usage
 
-After setting up the virtual environment, run the application: <b> python app.py </b>
+Run the model.py file to get the model saved in a model path
+Run the application: <b> python app.py </b>
+Use the test_images folder to test our model :)
+
+P.S: if the application doesn't have an "uploads" folder, make sure to create that.
 
 # Contribution Guidelines
 
@@ -81,4 +86,4 @@ You are welcome to contribute to this project! You can fork the repository or se
 
 # License
 
-Include your license information here (e.g., MIT License).
+MIT License
