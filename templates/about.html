@@ -37,21 +37,30 @@
             border-radius: 4px;
             cursor: pointer;
             transition: background 0.3s ease, transform 0.3s ease;
+            margin-top: 40px;
         }
         button:hover {
             background: #00BFA5;
             transform: scale(1.05);
         }
-        a{
-            color:#e0e0e0;
+        a {
+            color: #e0e0e0;
             text-decoration: none;
+            font-weight: bold;
+        }
+        a:hover {
+            color: #ffffff;
+        }
+        .dataset-link {
+            font-size: 1.2em;
+            text-align: center;
         }
     </style>
 </head>
 <body>
     <h1>About Artist Prediction</h1>
     <p>Welcome to the Artist Prediction application! This app allows you to upload an image of an art piece and uses a machine learning model to predict the artist who most likely created the artwork. The model analyzes the image and provides probabilities for different artists. Additionally, an AI chatbot gives you insights based on the model's predictions.</p>
-    <a href="https://www.kaggle.com/datasets/ikarus777/best-artworks-of-all-time"> <p>The Dataset Used</p></a>
+    <a href="https://www.kaggle.com/datasets/ikarus777/best-artworks-of-all-time" class="dataset-link">The Dataset Used</a>
     <button onclick="window.location.href='/predict'">Go to Prediction Page</button>
 </body>
 </html>

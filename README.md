@@ -41,6 +41,7 @@ The images are preprocessed and augmented to improve the model's performance. Th
 <li> Dividing the dataset into training and validation sets (80%, 20%).</li>
 
 <b> Model Architecture </b>
+
 We use the ResNet50 model pretrained on ImageNet as the base model. The following steps are taken:
 
 <li> Loaded the ResNet50 model without the top classification layer.</li>
@@ -67,7 +68,8 @@ cd <repository-directory>
 
 <li> Create and activate a virtual environment: </li>
 python -m venv venv
-# On Mac use: source venv/bin/activate   # On Windows use: venv\Scripts\activate
+
+#On Mac use: source venv/bin/activate   #On Windows use: venv\Scripts\activate
 
 <li> Install the required packages: </li>
 pip install -r requirements.txt
@@ -75,7 +77,9 @@ pip install -r requirements.txt
 # Usage
 
 Run the model.py file to get the model saved in a model path
+
 Run the application: <b> python app.py </b>
+
 Use the test_images folder to test our model :)
 
 P.S: if the application doesn't have an "uploads" folder, make sure to create that.
