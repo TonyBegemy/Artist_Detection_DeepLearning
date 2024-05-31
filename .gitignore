@@ -10,3 +10,5 @@ model/Artist_Resnet_model_0.84.h5
 *.jpg
 *.jpeg
 *.png
+*.h5
+/venv

@@ -3,27 +3,18 @@ import numpy as np
 import cv2
 import imageio
 import os
-import pickle
 import tensorflow as tf
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.models import load_model
-import subprocess
 from dotenv import load_dotenv, find_dotenv
 from langchain.chat_models import AzureChatOpenAI
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
-import imageio
 from werkzeug.utils import secure_filename
+
 _ = load_dotenv(find_dotenv())
 
 def ConnectToAzure():
-    """
-    desc:
-        Function connects to langchain AzureOpenAI
-    return: 
-        llm_model of llm
-    """
-    ## Keys ##
     OPENAI_API_TYPE = os.getenv("OPENAI_API_TYPE")
     OPENAI_API_BASE = os.getenv("OPENAI_API_BASE")
     OPENAI_API_VERSION = os.getenv("OPENAI_API_VERSION")
@@ -55,9 +46,9 @@ def ConversationInput():
     )
 
     conversation = LLMChain(
-    llm=ConnectToAzure(),
-    prompt=prompt,
-    verbose=False,
+        llm=ConnectToAzure(),
+        prompt=prompt,
+        verbose=False,
     )
     return conversation
 
@@ -65,13 +56,10 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 MB limit
 
-
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}# dol ely hay3ado bs 
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 model = load_model('model/Artist_Resnet_model_0.84.h5')
 
-
-# Define the labels (artists) used in your model
 labels = [
     "Vincent_van_Gogh",
     "Edgar_Degas",
@@ -93,7 +81,7 @@ labels = [
     "Sandro_Botticelli"
 ]
 
-train_input_shape = (224, 224, 3) #3lshan el model mayfar23sh 
+train_input_shape = (224, 224, 3)
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -105,8 +93,12 @@ def preprocess_image(img):
     img = np.expand_dims(img, axis=0)
     return img
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
+@app.route('/', methods=['GET'])
+def about():
+    return render_template('about.html')
+
+@app.route('/predict', methods=['GET', 'POST'])
+def predict():
     if request.method == 'POST':
         if 'file' not in request.files:
             return jsonify({'error': 'No file part'})
@@ -128,12 +120,8 @@ def index():
                 for idx in top_3_indices
             ]
 
-            print("\n\n\n---------------------")
             conversation = ConversationInput()
-            gpt_response = conversation.predict(input = str(results))
-
-            print(gpt_response)
-            print("---------------------\n\n\n")
+            gpt_response = conversation.predict(input=str(results))
 
             return jsonify({"results": results, "image_path": f"uploads/{filename}", "gpt_response": gpt_response})
         else:
@@ -143,10 +131,6 @@ def index():
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
-
-@app.route('/about')
-def about():
-    return render_template('about.html')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
