@@ -4,7 +4,9 @@
 /env
 /Artist_data
 /.ipynb_checkpoints
-model/Artist_Resnet_model.h5
+/__pycache__
+model/Artist_Resnet_model_0.82.h5
+model/Artist_Resnet_model_0.84.h5
 *.jpg
 *.jpeg
 *.png

@@ -68,7 +68,7 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 MB limit
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}# dol ely hay3ado bs 
 
-model = load_model('model/Artist_Resnet_model.h5')
+model = load_model('model/Artist_Resnet_model_0.84.h5')
 
 
 # Define the labels (artists) used in your model
