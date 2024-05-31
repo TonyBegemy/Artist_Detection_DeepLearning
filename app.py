@@ -15,6 +15,12 @@ from werkzeug.utils import secure_filename
 _ = load_dotenv(find_dotenv())
 
 def ConnectToAzure():
+    """
+    Connect to Azure's OpenAI service and return a configured model instance.
+
+    Returns:
+             llm_model: an instance of AzureChatOpenAI initialized with environment variables.
+    """
     OPENAI_API_TYPE = os.getenv("OPENAI_API_TYPE")
     OPENAI_API_BASE = os.getenv("OPENAI_API_BASE")
     OPENAI_API_VERSION = os.getenv("OPENAI_API_VERSION")
@@ -31,6 +37,12 @@ def ConnectToAzure():
     return llm_model
 
 def ConversationInput():
+    """
+    Create a conversational model using Azure's OpenAI service with a specific prompt template.
+
+    Returns:
+             conversation: an instance of LLMChain initialized with a prompt template and the Azure model.
+    """
     _DEFAULT_TEMPLATE = """
     You are an expert in art and artists.
     The human has provided an image of an art piece, 
@@ -85,9 +97,27 @@ labels = [
 train_input_shape = (224, 224, 3)
 
 def allowed_file(filename):
+    """
+    Check if the uploaded file has an allowed extension.
+
+    Parameters:
+             filename(str): the name of the file to check.
+
+    Returns:
+             bool: True if the file has an allowed extension, False otherwise.
+    """
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def preprocess_image(img):
+    """
+    Preprocess the input image for the model.
+
+    Parameters:
+             img: the image to preprocess.
+
+    Returns:
+             img: the preprocessed image ready for prediction.
+    """
     img = cv2.resize(img, (train_input_shape[0], train_input_shape[1]))
     img = image.img_to_array(img)
     img /= 255.0
@@ -96,10 +126,23 @@ def preprocess_image(img):
 
 @app.route('/', methods=['GET'])
 def about():
+    """
+    Render the about page.
+
+    Returns:
+             HTML: the rendered about.html page.
+    """
     return render_template('about.html')
 
 @app.route('/predict', methods=['GET', 'POST'])
 def predict():
+    """
+    Handle image upload and prediction requests. If the request is POST, process the uploaded file, 
+    make a prediction, and get a GPT response. If the request is GET, render the upload form.
+
+    Returns:
+             JSON: the prediction results and GPT response if POST, or the rendered index.html page if GET.
+    """
     if request.method == 'POST':
         if 'file' not in request.files:
             return jsonify({'error': 'No file part'})
@@ -131,6 +174,15 @@ def predict():
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
+    """
+    Serve the uploaded file from the upload directory.
+
+    Parameters:
+             filename(str): the name of the file to serve.
+
+    Returns:
+             File: the requested file from the upload directory.
+    """
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 if __name__ == '__main__':
