@@ -44,7 +44,7 @@ def ConversationInput():
     You are an expert in art and artists.
     The human has provided an image of an art piece, 
     which has been analyzed and classified with percentages indicating the likelihood of it being by specific artists. 
-    You will receive these percentages are required to comment on the results.
+    You will receive these percentages and required to comment on the results.
     
     Current conversation:
     New human question: {input}
