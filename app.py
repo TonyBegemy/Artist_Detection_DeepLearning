@@ -36,6 +36,7 @@ def ConversationInput():
     The human has provided an image of an art piece, 
     which has been analyzed and classified with percentages indicating the likelihood of it being by specific artists. 
     You will receive these percentages and required to comment on the results.
+    and tell why they are very similar
     
     Current conversation:
     New human question: {input}
